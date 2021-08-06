@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import MoviesList from './components/MoviesList';
 import AddMovie from './components/AddMovie';
 import './App.css';
+import async from "async";
 
 function App() {
   const [movies, setMovies] = useState([]);
@@ -13,6 +14,8 @@ function App() {
     setIsLoading(true);
     setError(null);
     try {
+      // just an example of a get and post, we could just use our firebase api endpoing but
+      // this was just an example of it
       const response = await fetch('https://www.swapi.tech/api/films/');
 
       //axios would throw an error for an error status code but fetch does not
@@ -42,8 +45,15 @@ function App() {
     fetchMoviesHandler();
   }, [fetchMoviesHandler]);
 
-  function addMovieHandler(movie) {
-    console.log(movie);
+  const addMovieHandler= async (movie) => {
+    const response = await fetch('https://http-request-c835b-default-rtdb.firebaseio.com/movies.json', {
+      method: 'POST',
+      body: JSON.stringify(movie),
+      headers: { 'Content-Type' : 'application/json' },
+    });
+
+    const data = await response.json();
+    console.log(data);
   }
 
   let content = <p>Found no movies.</p>;
